@@ -1,5 +1,6 @@
 package com.gmail.at.ivanehreshi;
 
+// Domain object
 public class User {
     Integer id;
     String name;

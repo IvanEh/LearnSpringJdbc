@@ -1,5 +1,6 @@
 package com.gmail.at.ivanehreshi;
 
+import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,19 +11,23 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan
-@ImportResource("classpath:/context.xml")
+@ImportResource("classpath:/context.xml") // xml file for old style configuration
 public class AppConfig implements InitializingBean {
 
+    // It's is a must to set up data source bean(or beans)
     @Bean
     public DataSource dataSource() {
         MysqlDataSource ds = new MysqlDataSource();
         ds.setURL("jdbc:mysql://localhost:3306/social_network");
         ds.setUser("ivaneh");
         ds.setPassword("password");
-
         return ds;
     }
 
+
+    // We will share a jdbcTemplate object across the application
+    // It's possible because jdbcTemplate is multithreaded. The only state it
+    // persist is the data source object
     @Bean
     @Autowired
     public JdbcTemplate jdbcTemplate(DataSource ds) {

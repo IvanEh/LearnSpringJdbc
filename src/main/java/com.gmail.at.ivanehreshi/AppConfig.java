@@ -25,10 +25,7 @@ public class AppConfig implements InitializingBean {
         return ds;
     }
 
-
-    // We will share a jdbcTemplate object across the application
-    // It's possible because jdbcTemplate is multithreaded. The only state it
-    // persist is the data source object
+    // Now we will use NamedParameterJdbcTempalte
     @Bean
     @Autowired
     public NamedParameterJdbcTemplate jdbcTemplate(DataSource ds) {

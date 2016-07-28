@@ -28,14 +28,17 @@ public class UserDao implements Dao<User, Integer> {
     @Autowired
     NamedParameterJdbcTemplate jdbc;
 
-    //
+    // Three usages of NamedParameterJdbcTemplate. Uncomment to test
+    // Parameters introduced by ':' symbol
     @Override
     public Integer create(User user) {
-        return createWithJavaMap(user);
+        return createWithJavaMap(user); // This actually always return null
 //        return createWithKeyHolderAndMapParameterSource(user);
 //        return createWithBeanPropertySqlParameterSource(user);
     }
 
+    // There is a Map<String, Object> used for substituting parameters
+    // Limitation: cannot pass KeyHolder object to retrieve row ids
     private Integer createWithJavaMap(User user) {
         Map<String, Object> params = new HashMap<>();
         params.put("age", user.age);
@@ -45,6 +48,18 @@ public class UserDao implements Dao<User, Integer> {
         return null;
     }
 
+    // First example of SqlParameterSource usage
+    //
+    // From docs: Interface that defines common functionality for objects that can offer
+    // parameter values for named SQL parameters, serving as argument for
+    // NamedParameterJdbcTemplate operations.
+    //
+    // Generally it is the previous solution but with the usage of more powerful
+    // SqlParameterSource. The particular impl MapSqlParameterSource uses a Java
+    // Map<String, Object> map to provide parameter values
+    //
+    // Method signatures that uses SqlParameterSource allows to pass KeyHolder object
+    // which will store row ids once the query is executed
     private Integer createWithKeyHolderAndMapParameterSource(User user) {
         Map<String, Object> params = new HashMap<>();
         params.put("age", user.age);
@@ -56,6 +71,8 @@ public class UserDao implements Dao<User, Integer> {
         return Optional.ofNullable(keyHolder.getKey()).orElse(-1).intValue();
     }
 
+    // BeanPropertySqlParameterSource a particularly useful impl of SqlParameterSource
+    // that automatically maps bean properties to parameter properties
     private Integer createWithBeanPropertySqlParameterSource(User user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
@@ -64,6 +81,8 @@ public class UserDao implements Dao<User, Integer> {
     }
 
 
+    // with getJdbcOperations() we retrieve the JdbcTemplate object so we
+    // can use its functions
     @Override
     public void update(User user) {
         jdbc.getJdbcOperations().update("UPDATE user SET name=? age=? WHERE id=?", user.name
@@ -74,6 +93,7 @@ public class UserDao implements Dao<User, Integer> {
     // The lambda is implementing RowMapper interface
     // in Spring Jdbc many manipulation are done via functional interfaces
     // EmptyResultDataAccessException is thrown when there is no data
+    // More on this will be later
     @Override
     public User read(Integer id) {
         try {

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 
@@ -30,8 +31,8 @@ public class AppConfig implements InitializingBean {
     // persist is the data source object
     @Bean
     @Autowired
-    public JdbcTemplate jdbcTemplate(DataSource ds) {
-        return new JdbcTemplate(ds);
+    public NamedParameterJdbcTemplate jdbcTemplate(DataSource ds) {
+        return new NamedParameterJdbcTemplate(ds);
     }
 
     @Override
@@ -43,7 +44,11 @@ public class AppConfig implements InitializingBean {
         AnnotationConfigApplicationContext ctx =
                 new AnnotationConfigApplicationContext(AppConfig.class);
         UserDao userDao = (UserDao) ctx.getBean("userDao");
-        User user = new User("Vasya Pupkin", 14);
-        userDao.create(user);
+        User user = new User("Vasya Pupkin", 16);
+        Integer id = userDao.create(user);
+        System.out.println("Created user with id=" + id);
+        System.out.println("User with the given id:" + userDao.read(id));
+        System.out.println("User with the id 1234:" + userDao.read(1234));
+        userDao.delete(user.id);
     }
 }

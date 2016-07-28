@@ -41,11 +41,11 @@ public class AppConfig implements InitializingBean {
         AnnotationConfigApplicationContext ctx =
                 new AnnotationConfigApplicationContext(AppConfig.class);
         UserDao userDao = (UserDao) ctx.getBean("userDao");
-        User user = new User("Vasya Pupkin", 16);
-        Integer id = userDao.create(user);
-        System.out.println("Created user with id=" + id);
-        System.out.println("User with the given id:" + userDao.read(id));
-        System.out.println("User with the id 1234:" + userDao.read(1234));
-        userDao.delete(user.id);
+        userDao.create(new User("Name 1", 16));
+        userDao.create(new User("Name 2", 17));
+        userDao.create(new User("Name 3", 18));
+        userDao.create(new User("Name 4", 19));
+        userDao.create(new User("Name 5", 22));
+        System.out.println(userDao.findOlderThan(17));
     }
 }

@@ -1,13 +1,10 @@
 package com.gmail.at.ivanehreshi;
 
-import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
@@ -26,6 +23,16 @@ public class AppConfig implements InitializingBean {
         return ds;
     }
 
+    @Bean
+    public UserSqlQuery_SqlQuery userSqlQuery_sqlQuery(DataSource dataSource) {
+        return new UserSqlQuery_SqlQuery(dataSource);
+    }
+
+    @Bean
+    public UserSqlQuery_MappingSqlQuery userSqlQuery_mappingSqlQuery(DataSource dataSource) {
+        return new UserSqlQuery_MappingSqlQuery(dataSource);
+    }
+
     // Now we will use NamedParameterJdbcTempalte
     @Bean
     @Autowired
@@ -41,7 +48,14 @@ public class AppConfig implements InitializingBean {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext ctx =
                 new AnnotationConfigApplicationContext(AppConfig.class);
-        UserDao userDao = (UserDao) ctx.getBean("userDao");
-        userDao.batchCreateRandom(11);
+        UserSqlQuery_SqlQuery userSqlQuery_sqlQuery =
+                (UserSqlQuery_SqlQuery) ctx.getBean("userSqlQuery_sqlQuery");
+        UserSqlQuery_MappingSqlQuery userSqlQuery_mappingSqlQuery =
+                (UserSqlQuery_MappingSqlQuery) ctx.getBean("userSqlQuery_mappingSqlQuery");
+
+        User user1 = userSqlQuery_sqlQuery.findObject(23);
+        User user2 = userSqlQuery_mappingSqlQuery.findObject(23);
+        System.out.println(user1);
+        System.out.println(user2);
     }
 }

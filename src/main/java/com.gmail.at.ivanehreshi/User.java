@@ -1,5 +1,7 @@
 package com.gmail.at.ivanehreshi;
 
+import java.util.Random;
+
 // Domain object
 public class User {
     Integer id;
@@ -15,6 +17,13 @@ public class User {
     public User(String name, Integer age) {
         this.name = name;
         this.age = age;
+    }
+
+    static int randomUserId = -1;
+    static Random random = new Random();
+    public static User randomUser() {
+        randomUserId++;
+        return new User("User " + randomUserId, random.nextInt(50) + 16);
     }
 
     public Integer getId() {

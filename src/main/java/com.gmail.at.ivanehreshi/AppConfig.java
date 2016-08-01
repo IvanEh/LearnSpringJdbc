@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
@@ -41,11 +42,6 @@ public class AppConfig implements InitializingBean {
         AnnotationConfigApplicationContext ctx =
                 new AnnotationConfigApplicationContext(AppConfig.class);
         UserDao userDao = (UserDao) ctx.getBean("userDao");
-        userDao.create(new User("Name 1", 16));
-        userDao.create(new User("Name 2", 17));
-        userDao.create(new User("Name 3", 18));
-        userDao.create(new User("Name 4", 19));
-        userDao.create(new User("Name 5", 22));
-        System.out.println(userDao.findOlderThan(17));
+        userDao.batchCreateRandom(11);
     }
 }

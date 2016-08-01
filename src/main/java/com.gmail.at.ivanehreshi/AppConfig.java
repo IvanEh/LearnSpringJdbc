@@ -26,13 +26,6 @@ public class AppConfig implements InitializingBean {
         return ds;
     }
 
-    // Now we will use NamedParameterJdbcTempalte
-    @Bean
-    @Autowired
-    public NamedParameterJdbcTemplate jdbcTemplate(DataSource ds) {
-        return new NamedParameterJdbcTemplate(ds);
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println("AppConfig initialized");
@@ -42,6 +35,7 @@ public class AppConfig implements InitializingBean {
         AnnotationConfigApplicationContext ctx =
                 new AnnotationConfigApplicationContext(AppConfig.class);
         UserDao userDao = (UserDao) ctx.getBean("userDao");
-        userDao.batchCreateRandom(11);
+        User user = User.randomUser();
+        System.out.println(userDao.create(user));
     }
 }
